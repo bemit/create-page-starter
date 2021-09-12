@@ -12,7 +12,7 @@ base = "."
 publish = "build/"
 
 # Default build command.
-command = "npm ci && npm run build"
+command = "touch .env && npm ci && npm run build"
 
 # Directory with the serverless Lambda functions to deploy to AWS.
 #functions = "functions/"
