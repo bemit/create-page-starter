@@ -1,6 +1,6 @@
 # Create Page Starter ⚛️
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/c2214cb4-af67-4525-a4ce-a4c68d3fa70d/deploy-status)](https://app.netlify.com/sites/create-amp-page/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/81882d4d-14be-4ff8-b30c-e7a4426eb744/deploy-status)](https://app.netlify.com/sites/create-page-starter/deploys)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 Starting point for static pages generated with [create-amp-page](https://github.com/bemit/create-amp-page) and using [@formanta/sass](https://formanta.bemit.codes) for styling - but **for PWA enhanced web pages** and **not** AMP. Directly deploy with [netlify cms](https://www.netlifycms.org/) as git managed static site generator!
