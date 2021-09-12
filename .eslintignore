@@ -1,0 +1,5 @@
+jest.*.js
+build
+node_modules
+Gulpfile.esnext.js
+Gulpfile.js

@@ -1,0 +1,29 @@
+/coverage
+/build
+
+# env variables
+.env
+!.env.example
+.npmrc
+
+# default upload dir
+/upload
+
+# NodeJS
+node_modules
+
+# Webpack profiling
+profile.json
+
+# Mac
+.DS_Store
+
+# file containing the latest JS build info
+src/toLoadInfo.json
+
+#
+## JetBrains IDE's
+
+.idea/
+*.iml
+*.iws

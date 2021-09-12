@@ -1,0 +1,78 @@
+$brand-color: #40b2ee;
+$brand-color-secondary: #560969;
+$spacing: 5px;
+
+@import "selector-names";
+@import '~normalize.css/normalize.css';
+@import '~@formanta/sass/meta';
+
+/*body {
+    box-sizing: border-box;
+}*/
+
+.sticky {
+    position: sticky;
+}
+
+.bg-white-trans {
+    background: rgba(#fff, 0.8);
+}
+
+pre > code {
+    padding: 0
+}
+
+.light {
+    font-weight: 300;
+}
+
+.grid {
+    width: #{'calc(100% + ' + (space(1) * 2) + ')'};
+    margin: space(1) * -1;
+}
+
+.grid > .col {
+    padding: space(1);
+}
+
+.footnotes {
+    &-list {
+        @include body2();
+        padding-left: 1.125em;
+    }
+
+    p {
+        //@include body2();
+        margin: 0;
+    }
+}
+
+.img-vw {
+    width: 100%;
+    height: auto;
+}
+
+@import '~@formanta/sass/style';
+
+.btn-secondary {
+    background-color: $brand-color-secondary;
+    color: #fff;
+    border-color: $brand-color-secondary;
+
+    &-o {
+        background-color: #fff;
+        color: $brand-color-secondary;
+        border-color: $brand-color-secondary;
+    }
+
+    &-text {
+        color: $brand-color-secondary;
+        border-color: transparent;
+    }
+}
+
+.body-secondary {
+    color: $brand-color-secondary;
+}
+
+@import "privacy-overlay";

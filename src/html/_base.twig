@@ -1,0 +1,145 @@
+{% extends '_main.twig' %}
+
+{% block head_meta %}
+    {% if head.title %}
+        <title>{{ head.title }}</title>
+    {% endif %}
+    {% if head.author %}
+        <meta name="author" content="{{ head.author }}"/>
+    {% endif %}
+    {% if head.description %}
+        <meta name="description" content="{{ head.description }}">
+    {% endif %}
+    {% if head.keywords %}
+        <meta name="keywords" content="{{ head.keywords }}">
+    {% endif %}
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    {% if links.canonical %}
+        <link rel="canonical" href="{{ links.canonical }}">
+    {% endif %}
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="theme-color" content="#ffffff">
+
+    {# <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "NewsArticle",
+            "headline": "Open-source framework for publishing content",
+            "datePublished": "2015-10-07T12:02:41Z",
+            "image": [
+                "logo.jpg"
+            ]
+        }
+    </script> #}
+{% endblock %}
+
+{% block head_style %}
+    {% if ampEnabled %}
+        {# @formatter:off #}
+        <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+
+        <style amp-custom>
+            {# any styles are injected here from build process #}
+        </style>
+        {# @formatter:on #}
+    {% else %}
+        <link href="/styles/main.css" rel="stylesheet" type="text/css"/>
+        {# <style>
+</style> #}
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    <header class="sticky flex justify-start items-center top-0 left-0 right-0 pl2 pr4 bg-white-trans z4">
+        <a href="/" class="mxa h-color body1 bold my0 py2 body-secondary">
+            Some Page
+        </a>
+    </header>
+{% endblock %}
+
+{% block container_inner %}
+    {{ parent() }}
+    <div id="root-pwa"></div>
+{% endblock %}
+
+{% block footer_inner__ %}
+    <footer class="container container-medium center">
+        <p class="mb0">&copy; 2021 Some Org.</p>
+        <div class="mb4">
+            <a href="/">Some Link</a>
+        </div>
+        <p class="mt0 light">Powered by <a href="https://github.com/bemit/create-amp-page">create-amp-page</a></p>
+    </footer>
+{% endblock %}
+
+{% block body_end %}
+    {{ parent() }}
+
+    {% if includePrivacyConsent %}
+        {% include './privacy/privacy.twig' %}
+
+        {% for asset in getAsset('privacy') %}
+            <script>
+                {{ embedScript(asset)|raw }}
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block body_end_script %}
+    {{ parent() }}
+
+    {# @formatter:off #}
+    {#
+     # this snippet enables to delete HTML elements when the page is indexed by e.g. the Google Bot
+     # just add the `.crawler-hide` class to the to-be-deleted HTML element
+     # this should be used as last resort, but enables to remove certain parts from the page for the google indexer,
+     # like the privacy consent descriptions
+     #}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {/bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent) && Array.from(document.querySelectorAll('.crawler-hide')).forEach(function(e) {e.remove()})});
+    </script>
+    {# @formatter:on #}
+
+    {% for asset in getAsset('main') %}
+        <script src="/{{ asset }}" async defer></script>
+    {% endfor %}
+
+    {% if serviceWorker.load %}
+        {# @formatter:off #}
+<script>
+    'serviceWorker' in navigator && navigator.serviceWorker.register('{{ links.origin }}sw.js', {scope: '/'}){% if serviceWorker.loadDebug %}.then(function(reg) {console.log('SW loaded', reg.scope)}){% else %}.then(function() {}){% endif %}{% if serviceWorker.loadDebug or serviceWorker.loadDebugError %}.catch(function(err) {console.error('SW load error', err)}){% else %}.catch(function() {}){% endif %}
+</script>
+        {# @formatter:on #}
+    {% endif %}
+
+    {% if not ampEnabled and injectNetlifyIdentity %}
+        {# NETLIFY-CMS #}
+        <script src="https://identity.netlify.com/v1/netlify-identity-widget.js">
+        </script>
+        {#
+        for AMP custom JS is not allowed,
+        thus the redirect after login does not work.
+        The email templates must be adjusted for AMP to correctly work with netlify identity for the admin only.
+        #}
+        <script>
+            if(window.netlifyIdentity) {
+                window.netlifyIdentity.on('init', user => {
+                    if(!user) {
+                        window.netlifyIdentity.on('login', () => {
+                            document.location.href = '/admin/'
+                        })
+                    }
+                })
+            }
+        </script>
+    {% endif %}
+{% endblock %}
