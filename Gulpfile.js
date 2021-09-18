@@ -1,9 +1,6 @@
-'use strict'
 import dotenv from 'dotenv'
 import path from 'path'
-// todo: use exported gulp from create-amp-page when reexported (again)
-import gulp from 'gulp'
-import {ampCreator} from 'create-amp-page'
+import {ampCreator, gulp} from 'create-amp-page'
 import {merge} from 'webpack-merge'
 import webpackTask from './Gulpfile.esnext.js'
 import markdownit from 'markdown-it'
@@ -21,7 +18,7 @@ if(result.error) {
     throw result.error
 }
 
-const liveUrl = 'https://create-page.netlify.app/'
+const liveUrl = 'https://create-page-starter.netlify.app/'
 
 const makePathFromFile = file => path.basename(file).replace('.twig', '')
 const port = process.env.PORT || 4489

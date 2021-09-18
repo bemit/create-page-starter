@@ -3,6 +3,7 @@
     "view": "browser",
     "container": {
         "port": 4489,
-        "startScript": "npm start"
+        "node": "12",
+        "startScript": "touch .env && npm start"
     }
 }
