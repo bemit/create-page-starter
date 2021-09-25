@@ -1,7 +1,7 @@
 {
     "name": "create-page-starter",
     "private": true,
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Starter template for static site generation with support of PWA-like enhancements.",
     "author": "Michael Becker https://mlbr.xyz",
     "license": "MIT",
@@ -57,9 +57,11 @@
         "babel-plugin-transform-export-extensions": "^6.22.0",
         "babel-preset-react-app": "^10.0.0",
         "clean-webpack-plugin": "^4.0.0",
+        "concurrently": "^6.2.1",
         "copy-webpack-plugin": "^9.0.1",
-        "create-amp-page": "~1.0.0-alpha.4",
+        "create-amp-page": "~1.0.0-alpha.5",
         "css-loader": "^6.2.0",
+        "cypress": "^8.4.1",
         "ejs-loader": "^0.5.0",
         "es6-promise": "^4.2.8",
         "eslint": "^7.32.0",
@@ -110,18 +112,13 @@
     },
     "scripts": {
         "tasks": "gulp --tasks",
-        "snap-build": "npm run clean && cross-env NO_OPTIMIZE=bigfiles npm run build && npm run snap",
         "serve": "nodemon server.js",
-        "start": "cross-env NODE_ENV=development gulp watch",
+        "start": "cross-env NODE_ENV=development concurrently --kill-others npm:watch npm:tdd-ui",
+        "watch": "gulp watch",
         "build": "cross-env NODE_ENV=production gulp build",
+        "postbuild": "npm run test-ui",
+        "tdd-ui": "cypress open",
+        "test-ui": "cypress run",
         "clean": "gulp clean"
-    },
-    "reactSnap": {
-        "source": "build",
-        "minifyHtml": {
-            "asyncScriptTags": true,
-            "collapseWhitespace": false,
-            "removeComments": false
-        }
     }
 }
