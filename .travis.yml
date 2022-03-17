@@ -6,4 +6,5 @@ install:
     - npm ci
 script:
     - npm run build
-    - cp -r build/media build/defaultPage/media
+    # comment this out when using media files:
+    #- cp -r build/media build/defaultPage/media
