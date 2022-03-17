@@ -41,6 +41,7 @@ jobs:
             -   name: Build Page
                 run: |
                     npm run build
-                    cp -r build/media build/defaultPage/media
+                # comment this out when using media files:
+                #    cp -r build/media build/defaultPage/media
 
         # todo: add your deployment steps
