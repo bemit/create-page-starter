@@ -4,9 +4,9 @@ import fs from 'fs'
 export default [
     {
         name: 'getAsset',
-        func: (name) => {
+        func: (pageId, name) => {
             try {
-                const toLoadInfoFile = path.resolve('src', 'toLoadInfo.json')
+                const toLoadInfoFile = path.resolve('src', 'toLoadInfo-' + pageId + '.json')
                 if(fs.existsSync(toLoadInfoFile)) {
                     const toLoadInfo = JSON.parse(fs.readFileSync(toLoadInfoFile).toString())
                     // todo: warn/fail when not found?

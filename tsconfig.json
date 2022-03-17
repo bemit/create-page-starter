@@ -23,5 +23,10 @@
     "exclude": [
         "/build/",
         "/node_modules/"
-    ]
+    ],
+    "ts-node": {
+        "moduleTypes": {
+            "jest.config.ts": "cjs"
+        }
+    }
 }

@@ -7,6 +7,10 @@ import isWsl from 'is-wsl'
 import TerserPlugin from 'terser-webpack-plugin'
 import named from 'vinyl-named-with-path'
 import ESLintWebpackPlugin from 'eslint-webpack-plugin'
+import {fileURLToPath} from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const safeEnvVars = ['NODE_ENV']
 
@@ -35,23 +39,32 @@ const safeEnvVars = ['NODE_ENV']
 
 const isProd = process.env.NODE_ENV === 'production'
 
-export default function webpackTask(src, dist, browsersync, watch) {
+export default function webpackTask(pageId, srcDir, src, dist, browsersync, watch) {
     return function webpacker() {
         return gulp.src(src)
             .pipe(named())
             .pipe(webpackStream({
                 watch,
+                stats: {
+                    preset: 'normal',
+                    errorsCount: true,
+                    warningsCount: true,
+                    colors: true,
+                },
                 mode: isProd ? 'production' : 'development',
                 output: {
                     filename: isProd ? 'js/[name].[fullhash:8].js' : 'js/[name].js',
                     chunkFilename: isProd ? 'js/[name].chunk.[chunkhash:8].js' : 'js/[name].chunk.js',
+                    // filename: isProd ? 'js/' + name + '_[name].[fullhash:8].js' : 'js/' + name + '_[name].js',
+                    // chunkFilename: isProd ? 'js/' + name + '_[name].chunk.[chunkhash:8].js' : 'js/' + name + '_[name].chunk.js',
+                    // dist: dist,
                     //futureEmitAssets: true,
                 },
                 performance: {
-                    // hints: false,
+                    hints: false,
                 },
                 resolve: {
-                    extensions: ['.ts', '.tsx', '.js', '.json'],
+                    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
                     modules: [
                         'node_modules',
                     ],
@@ -60,28 +73,11 @@ export default function webpackTask(src, dist, browsersync, watch) {
                     modules: ['node_modules'],
                 },
                 module: {
-                    rules: [/*{
-                        loader: 'eslint-webpack-plugin',
-                        enforce: 'pre',
+                    rules: [{
                         test: /\.(js|jsx|ts|tsx)$/,
                         include: [
-                            path.resolve(path.dirname(src)),
-                            //path.join(context, 'src'),
-                        ],
-                        options: {
-                            cache: true,
-                            //formatter: require.resolve('react-dev-utils/eslintFormatter'),
-                            //eslintPath: require.resolve('eslint'),
-                            formatter: 'react-dev-utils/eslintFormatter',
-                            eslintPath: 'eslint',
-                            emitWarning: !isProd,
-                            //failOnError: true,
-                            //failOnWarning: true,
-                        },
-                    },*/ {
-                        test: /\.(js|jsx|ts|tsx)$/,
-                        include: [
-                            path.resolve(path.dirname(src)),
+                            path.resolve(__dirname, srcDir),
+                            //path.resolve(path.dirname(src)),
                             //path.join(context, 'src'),
                         ],
                         loader: 'babel-loader',
@@ -100,7 +96,8 @@ export default function webpackTask(src, dist, browsersync, watch) {
                         test: /\.(js|mjs)$/,
                         exclude: [
                             /@babel(?:\/|\\{1,2})runtime/,
-                            path.resolve(path.dirname(src)),
+                            path.resolve(__dirname, srcDir),
+                            //path.resolve(path.dirname(src)),
                             //path.join(context, 'src'),
                         ],
                         loader: 'babel-loader',
@@ -263,16 +260,19 @@ export default function webpackTask(src, dist, browsersync, watch) {
                     })],
                 },
                 plugins: [
-                    // todo: mock inject `runtimeChunk` with twig / gulp tass
-                    new BundleWebpackPlugin(),
-                    new ESLintWebpackPlugin({
+                    // using eslint with webpack only while watching, for `build` `jest` needs to check it
+                    ...(watch ? [new ESLintWebpackPlugin({
+                        context: path.resolve(__dirname, srcDir),
+                        overrideConfigFile: path.resolve(__dirname, '.eslintrc'),
                         cache: true,
-                        //formatter: require.resolve('react-dev-utils/eslintFormatter'),
-                        //eslintPath: require.resolve('eslint'),
-                        formatter: 'react-dev-utils/eslintFormatter',
                         eslintPath: 'eslint',
-                        emitWarning: !isProd,
-                    }),
+                        emitWarning: true,
+                        failOnWarning: isProd,
+                        quiet: false,
+                        extensions: ['.ts', '.tsx', '.js', '.jsx'],
+                    })] : []),
+                    // todo: mock inject `runtimeChunk` with twig / gulp tass
+                    new BundleWebpackPlugin(pageId),
                     new webpack.DefinePlugin({
                         'process.env': (() => {
                             const safeEnv = {}
@@ -296,8 +296,10 @@ export default function webpackTask(src, dist, browsersync, watch) {
 }
 
 class BundleWebpackPlugin {
-    constructor(options) {
-        this.options = options
+    pageId = undefined
+
+    constructor(pageId) {
+        this.pageId = pageId
     }
 
     apply(compiler) {
@@ -314,12 +316,12 @@ class BundleWebpackPlugin {
                     }),
                 )
             }
-            const toLoadInfoFile = path.resolve('src', 'toLoadInfo.json')
+            const toLoadInfoFile = path.resolve('src', 'toLoadInfo-' + this.pageId + '.json')
             fs.access(toLoadInfoFile, (err) => {
                 if(err) {
                     fs.writeFileSync(toLoadInfoFile, '{}')
                 }
-                const data = fs.readFileSync(toLoadInfoFile)
+                const data = fs.readFileSync(toLoadInfoFile) || '{}'
                 const result = JSON.parse(data.toString())
                 const nextUnordered = {...result, ...toLoadInfo}
                 const ordered = Object.keys(nextUnordered).sort().reduce(

@@ -20,11 +20,11 @@
         <link rel="canonical" href="{{ links.canonical }}">
     {% endif %}
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ links.cdn }}apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ links.cdn }}favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ links.cdn }}favicon-16x16.png">
+    <link rel="mask-icon" href="{{ links.cdn }}safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="manifest" href="{{ links.origin }}manifest.json">
     <meta name="msapplication-TileColor" content="#000000">
     <meta name="theme-color" content="#ffffff">
 
@@ -51,15 +51,20 @@
         </style>
         {# @formatter:on #}
     {% else %}
-        <link href="/styles/main.css" rel="stylesheet" type="text/css"/>
-        {# <style>
-</style> #}
+        {% for styleSheet in styleSheets %}
+            {% if cssInject %}
+                <style>
+                </style>
+            {% else %}
+                <link href="{{ links.origin }}styles/{{ styleSheet }}" rel="stylesheet" type="text/css"/>
+            {% endif %}
+        {% endfor %}
     {% endif %}
 {% endblock %}
 
 {% block header %}
     <header class="sticky flex justify-start items-center top-0 left-0 right-0 pl2 pr4 bg-white-trans z4">
-        <a href="/" class="mxa h-color body1 bold my0 py2 body-secondary">
+        <a href="{{ links.origin }}" class="mxa body1 bold my0 py2 body-secondary">
             Some Page
         </a>
     </header>
@@ -72,9 +77,9 @@
 
 {% block footer_inner__ %}
     <footer class="container container-medium center">
-        <p class="mb0">&copy; 2021 Some Org.</p>
+        <p class="mb0">&copy; 2022 Some Org.</p>
         <div class="mb4">
-            <a href="/">Some Link</a>
+            <a href="{{ links.origin }}">Some Link</a>
         </div>
         <p class="mt0 light">Powered by <a href="https://github.com/bemit/create-amp-page">create-amp-page</a></p>
     </footer>
@@ -82,16 +87,6 @@
 
 {% block body_end %}
     {{ parent() }}
-
-    {% if includePrivacyConsent %}
-        {% include './privacy/privacy.twig' %}
-
-        {% for asset in getAsset('privacy') %}
-            <script>
-                {{ embedScript(asset)|raw }}
-            </script>
-        {% endfor %}
-    {% endif %}
 {% endblock %}
 
 {% block body_end_script %}

@@ -11,6 +11,7 @@
 
 # NodeJS
 node_modules
+.eslintcache
 
 # Webpack profiling
 profile.json
@@ -19,7 +20,7 @@ profile.json
 .DS_Store
 
 # file containing the latest JS build info
-src/toLoadInfo.json
+src/toLoadInfo*
 
 #
 ## JetBrains IDE's

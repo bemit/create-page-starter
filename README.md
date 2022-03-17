@@ -16,11 +16,13 @@ Starting point for static pages generated with [create-amp-page](https://github.
     npm run tasks
     npm run clean
 
-    # serve `build` with `server.js`
-    # for checking build version at port :3030
-    npm run serve
+    npm run test
+    # test driven UI development (with cypress):
+    npm run tdd-ui
+    # test driven JS development (with jest):
+    npm run tdd-js
 
-Open [localhost:4489](http://localhost:4489) for your local page preview and change something in `src/*`!
+Open [localhost:4489/defaultPage](http://localhost:4489/defaultPage) for your local page preview and change something in `src/*`!
 
 [![Features](https://img.shields.io/badge/Features-blue?labelColor=333&color=f4f4f4&style=for-the-badge&logo=vercel&logoColor=333)](#features)
 
@@ -47,6 +49,8 @@ Additionally, this starter has babel and webpack configured for Typescript and R
 - `.env` for configuration of env vars
     - need to be prefixed with either `REACT_APP_` or `WEB_APP_` to be available in javascript
 - `build` dist folder after running `npm run build` or while `npm run start`
+    - each page will be saved in a folder, standard: `build/defaultPage`
+    - media files are saved in `build/media`
 - `public` with general files in root like `manifest.json`
 - `public/admin` config and setup files for netlify cms
 - `src/api` may be used as mock api
@@ -65,19 +69,6 @@ Additionally, this starter has babel and webpack configured for Typescript and R
 - `public/manifest.json` needs some proper namings and colors
 - `public/offline.html` needs some proper namings and email address
 - `src/js/sw.js` maybe needs a new cache key and "pages to cache" configuration
-
-## Privacy Consent / Tracking
-
-Includes a basic privacy consent banner.
-
-> be sure to check the current law requirements for your country and project, this project only supplies some basic logic and does **not guarantee any compliance, especially no GDPR compliance**!
-
-When using `twig.data.includePrivacyConsent = true` there is a basic template loaded and also the needed JS is embedded in each page.
-
-- supports Google and Facebook tracking
-- uses env vars for setup of pixel IDs
-- needs your translation and specification in `src/twig/privacy/*`
--
 
 ## Netlify CMS
 
@@ -129,5 +120,5 @@ By committing your code/creating a pull request to this repository you agree to 
 
 ## Copyright
 
-2021 | [Michael Becker](https://mlbr.xyz), [bemit UG (haftungsbeschränkt)](https://bemit.codes)
+2022 | [Michael Becker](https://mlbr.xyz), [bemit UG (haftungsbeschränkt)](https://bemit.codes)
 
