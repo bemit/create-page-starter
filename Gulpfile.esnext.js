@@ -39,7 +39,12 @@ const safeEnvVars = ['NODE_ENV']
 
 const isProd = process.env.NODE_ENV === 'production'
 
-export default function webpackTask(pageId, srcDir, src, dist, browsersync, watch) {
+export default function webpackTask(
+    pageId,
+    {srcDir, src},
+    {dist, distPrefix = 'js/'},
+    {browsersync, watch, cacheGroups},
+) {
     return function webpacker() {
         return gulp.src(src)
             .pipe(named())
@@ -53,12 +58,8 @@ export default function webpackTask(pageId, srcDir, src, dist, browsersync, watc
                 },
                 mode: isProd ? 'production' : 'development',
                 output: {
-                    filename: isProd ? 'js/[name].[fullhash:8].js' : 'js/[name].js',
-                    chunkFilename: isProd ? 'js/[name].chunk.[chunkhash:8].js' : 'js/[name].chunk.js',
-                    // filename: isProd ? 'js/' + name + '_[name].[fullhash:8].js' : 'js/' + name + '_[name].js',
-                    // chunkFilename: isProd ? 'js/' + name + '_[name].chunk.[chunkhash:8].js' : 'js/' + name + '_[name].chunk.js',
-                    // dist: dist,
-                    //futureEmitAssets: true,
+                    filename: isProd ? distPrefix + '[name].[fullhash:8].js' : distPrefix + '[name].js',
+                    chunkFilename: isProd ? distPrefix + '[name].chunk.[chunkhash:8].js' : distPrefix + '[name].chunk.js',
                 },
                 performance: {
                     hints: false,
@@ -77,8 +78,6 @@ export default function webpackTask(pageId, srcDir, src, dist, browsersync, watc
                         test: /\.(js|jsx|ts|tsx)$/,
                         include: [
                             path.resolve(__dirname, srcDir),
-                            //path.resolve(path.dirname(src)),
-                            //path.join(context, 'src'),
                         ],
                         loader: 'babel-loader',
                         options: {
@@ -97,8 +96,6 @@ export default function webpackTask(pageId, srcDir, src, dist, browsersync, watc
                         exclude: [
                             /@babel(?:\/|\\{1,2})runtime/,
                             path.resolve(__dirname, srcDir),
-                            //path.resolve(path.dirname(src)),
-                            //path.join(context, 'src'),
                         ],
                         loader: 'babel-loader',
                         options: {
@@ -107,7 +104,6 @@ export default function webpackTask(pageId, srcDir, src, dist, browsersync, watc
                             compact: false,
                             presets: [
                                 [
-                                    //require.resolve('babel-preset-react-app/dependencies'),
                                     'babel-preset-react-app/dependencies',
                                     {helpers: true},
                                 ],
@@ -123,7 +119,6 @@ export default function webpackTask(pageId, srcDir, src, dist, browsersync, watc
                         },
                     }, {
                         test: /\.html$/i,
-                        // exclude: [/node_modules/],
                         use: [{
                             loader: 'ejs-loader',
                         }, {
@@ -185,29 +180,19 @@ export default function webpackTask(pageId, srcDir, src, dist, browsersync, watc
                 },
                 optimization: {
                     runtimeChunk: false,
-                    //splitChunks: false,
                     splitChunks: {
                         chunks: 'all',
                         name: false,
+                        usedExports: true,
                         cacheGroups: {
-                            default: false,
-                            vendors: false,
-                            react: {
-                                test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-                                name: 'vendor-react',
-                            },
-                            uiSchema: {
-                                test: /[\\/]node_modules[\\/](@ui-schema)[\\/]/,
-                                name: 'vendor-uis',
-                            },
-                            materialUi: {
-                                test: /[\\/]node_modules[\\/](@material-ui)[\\/]/,
-                                name: 'vendor-mui',
-                            },
+                            ...(cacheGroups || {}),
                             vendor: {
-                                //chunks: 'all',
                                 name: 'vendor',
                                 test: /node_modules/,
+                                priority: -2,
+                                minChunks: 1,
+                                minSize: 225000,
+                                maxSize: 665000,
                             },
                         },
                     },

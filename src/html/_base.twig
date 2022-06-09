@@ -77,7 +77,7 @@
 
 {% block footer_inner__ %}
     <footer class="container container-medium center">
-        <p class="mb0">&copy; 2022 Some Org.</p>
+        <p class="mb0">&copy; {{ timeContext.year }} Some Org.</p>
         <div class="mb4">
             <a href="{{ links.origin }}">Some Link</a>
         </div>
@@ -104,8 +104,8 @@
     </script>
     {# @formatter:on #}
 
-    {% for asset in getAsset('main') %}
-        <script src="/{{ asset }}" async defer></script>
+    {% for asset in getAsset(pageId, 'main') %}
+        <script src="{{ links.origin }}/{{ asset }}" async defer></script>
     {% endfor %}
 
     {% if serviceWorker.load %}
