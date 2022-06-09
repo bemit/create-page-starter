@@ -28,6 +28,7 @@ pretty_urls = true
 publish = "build/defaultPage/"
 #command = "make publish"
 #environment = { ACCESS_TOKEN = "super secret", NODE_VERSION = "8.0.1" }
+environment = { NODE_VERSION = "14" }
 
 # Deploy Preview context: all deploys generated from a pull/merge request will
 # inherit these settings.
